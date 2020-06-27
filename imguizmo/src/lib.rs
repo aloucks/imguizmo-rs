@@ -256,7 +256,7 @@ fn draw_cube<'a, 'ui>(
         let view = view.as_ptr() as *const f32;
         let projection = projection.as_ptr() as *const f32;
         let model = model.as_ptr() as *const f32;
-        ffi::ImGuizmo_DrawCube(view, projection, model);
+        ffi::ImGuizmo_DrawCubes(view, projection, model, 1);
     }
 }
 

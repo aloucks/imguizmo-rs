@@ -19,6 +19,7 @@ fn main() {
         build.include(include);
     }
     build
+        .cpp(true)
         .file("third_party/ImGuizmo/ImGuizmo.cpp")
         .file("src/cimguizmo.cpp")
         //.file("third_party/ImGuizmo/ImCurveEdit.cpp")

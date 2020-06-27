@@ -1,4 +1,4 @@
-use std::os::raw::c_float;
+use std::os::raw::{c_float, c_int};
 
 #[link(name = "imguizmo")]
 extern "C" {}
@@ -39,10 +39,11 @@ extern "C" {
     );
     pub fn ImGuizmo_SetRect(x: c_float, y: c_float, width: c_float, height: c_float);
     pub fn ImGuizmo_SetOrthographic(isOrthographic: bool);
-    pub fn ImGuizmo_DrawCube(
+    pub fn ImGuizmo_DrawCubes(
         view: *const c_float,
         projection: *const c_float,
         matrix: *const c_float,
+        matrixCount: c_int,
     );
     pub fn ImGuizmo_DrawGrid(
         view: *const c_float,
@@ -81,7 +82,7 @@ mod tests {
                 ImGuizmo_RecomposeMatrixFromComponents(null, null, null, null_mut);
                 ImGuizmo_SetRect(0.0, 0.0, 1.0, 1.0);
                 ImGuizmo_SetOrthographic(false);
-                ImGuizmo_DrawCube(null, null, null);
+                ImGuizmo_DrawCubes(null, null, null, 0);
                 ImGuizmo_DrawGrid(null, null, null, 10.0);
                 ImGuizmo_Manipulate(
                     null,
