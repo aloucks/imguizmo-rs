@@ -2,6 +2,7 @@ use std::env;
 use std::path::Path;
 
 fn main() {
+    let mut build = cc::Build::new();
     let cimgui_include = env::var("DEP_IMGUI_THIRD_PARTY").expect("DEP_IMGUI_THIRD_PARTY");
     let imgui_include = Path::new(&cimgui_include)
         .join("imgui")
@@ -13,10 +14,13 @@ fn main() {
         imgui_include.as_str(),
         cimgui_include.as_str(),
     ];
-
-    let mut build = cc::Build::new();
     for include in includes.iter() {
         build.include(include);
+    }
+    for (key, val) in env::vars().filter(|(key, _)| key.starts_with("DEP_IMGUI_DEFINE_")) {
+        let key = key.trim_start_matches("DEP_IMGUI_DEFINE_");
+        let val = if !val.is_empty() { Some(val.as_str()) } else { None };
+        build.define(key, val);
     }
     build
         .cpp(true)
