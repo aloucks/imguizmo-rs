@@ -362,7 +362,11 @@ pub struct Builder<'a, 'ui> {
 }
 
 impl<'a, 'ui> Builder<'a, 'ui> {
-    pub fn new(gizmo: &'a Gizmo<'a, 'ui>, view: &'a Matrix4, model: &'a mut Matrix4) -> Builder<'a, 'ui> {
+    pub fn new(
+        gizmo: &'a Gizmo<'a, 'ui>,
+        view: &'a Matrix4,
+        model: &'a mut Matrix4,
+    ) -> Builder<'a, 'ui> {
         Builder {
             gizmo,
             view,
@@ -429,7 +433,9 @@ impl<'a, 'ui> Builder<'a, 'ui> {
     /// [set_rect](fn.set_rect.html), [set_orthographic](fn.set_orthographic.html), and [manipulate](fn.manipulate.html)
     /// based on this `Gizmo`s attributes.
     pub fn manipulate(self) {
-        let projection = self.gizmo.prepare_projection(self.windowed, self.projection);
+        let projection = self
+            .gizmo
+            .prepare_projection(self.windowed, self.projection);
         manipulate(
             self.gizmo,
             self.view,
@@ -446,14 +452,19 @@ impl<'a, 'ui> Builder<'a, 'ui> {
 
     /// Draw a grid for debugging.
     pub fn draw_grid(self, grid_size: f32) -> Self {
-        let projection = self.gizmo.prepare_projection(self.windowed, self.projection);
-        self.gizmo.draw_grid(self.view, &projection, &self.model, grid_size);
+        let projection = self
+            .gizmo
+            .prepare_projection(self.windowed, self.projection);
+        self.gizmo
+            .draw_grid(self.view, &projection, &self.model, grid_size);
         self
     }
 
     /// Draw a cube for debugging with `manipulate`.
     pub fn draw_cube(self) -> Self {
-        let projection = self.gizmo.prepare_projection(self.windowed, self.projection);
+        let projection = self
+            .gizmo
+            .prepare_projection(self.windowed, self.projection);
         self.gizmo.draw_cube(self.view, &projection, &self.model);
         self
     }
