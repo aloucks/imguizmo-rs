@@ -254,7 +254,7 @@ fn draw_cube<'a, 'ui>(
 ) {
     unsafe {
         let view = view.as_ptr() as *const f32;
-        let projection = projection.as_ptr() as *const f32;;
+        let projection = projection.as_ptr() as *const f32;
         let model = model.as_ptr() as *const f32;
         ffi::ImGuizmo_DrawCube(view, projection, model);
     }
@@ -324,8 +324,8 @@ pub struct Rect {
 impl Rect {
     /// Creates a viewport `Rect` from the current window position and size.
     pub fn from_window<'ui>(ui: &Ui<'ui>) -> Rect {
-        let (x, y) = ui.get_window_pos();
-        let (width, height) = ui.get_window_size();
+        let [x, y] = ui.window_pos();
+        let [width, height] = ui.window_size();
         Rect {
             x,
             y,
@@ -336,7 +336,7 @@ impl Rect {
 
     /// Creates a viewport `Rect` from the display size.
     pub fn from_display<'ui>(ui: &Ui<'ui>) -> Rect {
-        let (width, height) = ui.imgui().display_size();
+        let [width, height] = ui.io().display_size;
         Rect {
             x: 0.0,
             y: 0.0,
