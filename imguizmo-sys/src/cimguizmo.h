@@ -26,22 +26,30 @@
 
 #define IMGUIZMO_C_API IMGUIZMO_C_EXTERN IMGUIZMO_C_EXPORT
 
-#include "imgui.h"
 #include "ImGuizmo.h"
 
-enum ImGuizmo_OPERATION
+enum ImGuizmo_Operation
 {
-	TRANSLATE = ImGuizmo::OPERATION::TRANSLATE,
-	ROTATE    = ImGuizmo::OPERATION::ROTATE,
-	SCALE     = ImGuizmo::OPERATION::SCALE,
-	BOUNDS    = ImGuizmo::OPERATION::BOUNDS
+	Translate = ImGuizmo::OPERATION::TRANSLATE,
+	Rotate    = ImGuizmo::OPERATION::ROTATE,
+	Scale     = ImGuizmo::OPERATION::SCALE,
+	Bounds    = ImGuizmo::OPERATION::BOUNDS
 };
 
-enum ImGuizmo_MODE
+enum ImGuizmo_Mode
 {
-    LOCAL = ImGuizmo::MODE::LOCAL,
-    WORLD = ImGuizmo::MODE::WORLD
+    Local = ImGuizmo::MODE::LOCAL,
+    World = ImGuizmo::MODE::WORLD
 };
+
+typedef struct CImVec2 {
+    float x;
+    float y;
+} CImVec2;
+
+#ifndef ImU32
+#define ImU32 unsigned int
+#endif
 
 IMGUIZMO_C_API void ImGuizmo_SetDrawlist();
 IMGUIZMO_C_API void ImGuizmo_BeginFrame();
@@ -54,6 +62,7 @@ IMGUIZMO_C_API void ImGuizmo_SetRect(float x, float y, float width, float height
 IMGUIZMO_C_API void ImGuizmo_SetOrthographic(bool isOrthographic);
 IMGUIZMO_C_API void ImGuizmo_DrawCubes(const float *view, const float *projection, const float *matrix, int matrixCount);
 IMGUIZMO_C_API void ImGuizmo_DrawGrid(const float *view, const float *projection, const float *matrix, const float gridSize);
-IMGUIZMO_C_API void ImGuizmo_Manipulate(const float *view, const float *projection, ImGuizmo_OPERATION operation, ImGuizmo_MODE mode, float *matrix, float *deltaMatrix = 0, float *snap = 0, float *localBounds = NULL, float *boundsSnap = NULL);
+IMGUIZMO_C_API void ImGuizmo_Manipulate(const float *view, const float *projection, ImGuizmo_Operation operation, ImGuizmo_Mode mode, float *matrix, float *deltaMatrix = 0, float *snap = 0, float *localBounds = NULL, float *boundsSnap = NULL);
+IMGUIZMO_C_API void ImGuizmo_ViewManipulate(float* view, float length, const CImVec2* position, const CImVec2* size, ImU32 backgroundColor);
 
 #endif // CIMGUIZMO_H

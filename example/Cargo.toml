@@ -1,0 +1,20 @@
+[package]
+name = "example"
+version = "0.1.0"
+authors = ["Aaron Loucks <aloucks@cofront.net>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wgpu = "0.5"
+imguizmo = { version = "0.0.1", path = "../imguizmo" }
+futures = "0.3"
+imgui = "0.4"
+imgui-winit-support = "0.4"
+imgui-wgpu = "0.7"
+winit = "0.22"
+raw-window-handle = "0.3"
+env_logger = "0.7"
+cgmath = "0.17"

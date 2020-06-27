@@ -20,6 +20,7 @@ use imgui::Ui;
 
 use std::ptr;
 
+pub type Vector2 = [f32; 2];
 pub type Vector3 = [f32; 3];
 pub type Vector4 = [f32; 4];
 pub type Matrix4 = [Vector4; 4];
@@ -122,6 +123,19 @@ impl<'a, 'ui> Gizmo<'a, 'ui> {
         )
     }
 
+    pub fn view_manipulate(
+        &self,
+        view: &mut Matrix4,
+        camera_distance: f32,
+        position: Vector2,
+        size: Vector2,
+        background_color: u32,
+    ) {
+        unsafe {
+            ffi::ImGuizmo_ViewManipulate(view, camera_distance, &position, &size, background_color);
+        }
+    }
+
     /// Draw a cube for debugging with `manipulate`.
     pub fn draw_cube(&self, view: &Matrix4, projection: &Matrix4, model: &Matrix4) {
         draw_cube(self, view, projection, model)
@@ -187,7 +201,7 @@ fn is_over<'a, 'ui>(_frame: &Gizmo<'a, 'ui>) -> bool {
 
 /// Returns true is the mouse is over a gizmo control and the gizmo is in a moving state.
 fn is_using<'a, 'ui>(_frame: &Gizmo<'a, 'ui>) -> bool {
-    unsafe { ffi::ImGuizmo_IsOver() }
+    unsafe { ffi::ImGuizmo_IsUsing() }
 }
 
 /// Enable or disable the gizmo. This state is sticky until the the next call to `enable`.
@@ -206,10 +220,6 @@ pub fn decompose_matrix_to_components(
     scale: &mut Vector3,
 ) {
     unsafe {
-        let matrix = matrix.as_ptr() as *const f32;
-        let translation = translation.as_mut_ptr() as *mut f32;
-        let rotation = rotation.as_mut_ptr() as *mut f32;
-        let scale = scale.as_mut_ptr() as *mut f32;
         ffi::ImGuizmo_DecomposeMatrixToComponents(matrix, translation, rotation, scale);
     }
 }
@@ -222,10 +232,6 @@ pub fn recompose_matrix_from_components(
     matrix: &mut Matrix4,
 ) {
     unsafe {
-        let matrix = matrix.as_mut_ptr() as *mut f32;
-        let translation = translation.as_ptr() as *const f32;
-        let rotation = rotation.as_ptr() as *const f32;
-        let scale = scale.as_ptr() as *const f32;
         ffi::ImGuizmo_RecomposeMatrixFromComponents(translation, rotation, scale, matrix);
     }
 }
@@ -245,6 +251,12 @@ fn set_orthographic<'a, 'ui>(_frame: &Gizmo<'a, 'ui>, is_orthographic: bool) {
     }
 }
 
+pub fn set_ortho(is_ortho: bool) {
+    unsafe {
+        ffi::ImGuizmo_SetOrthographic(is_ortho);
+    }
+}
+
 /// Draw a cube for debugging with `manipulate`.
 fn draw_cube<'a, 'ui>(
     _frame: &Gizmo<'a, 'ui>,
@@ -253,9 +265,6 @@ fn draw_cube<'a, 'ui>(
     model: &Matrix4,
 ) {
     unsafe {
-        let view = view.as_ptr() as *const f32;
-        let projection = projection.as_ptr() as *const f32;
-        let model = model.as_ptr() as *const f32;
         ffi::ImGuizmo_DrawCubes(view, projection, model, 1);
     }
 }
@@ -269,9 +278,6 @@ fn draw_grid<'a, 'ui>(
     grid_size: f32,
 ) {
     unsafe {
-        let view = view.as_ptr() as *const f32;
-        let projection = projection.as_ptr() as *const f32;
-        let model = model.as_ptr() as *const f32;
         ffi::ImGuizmo_DrawGrid(view, projection, model, grid_size);
     }
 }
@@ -291,13 +297,10 @@ fn manipulate<'a, 'ui>(
     bounds_snap: Option<&mut Vector3>,
 ) {
     unsafe {
-        let view = view.as_ptr() as *const f32;
-        let projection = projection.as_ptr() as *const f32;
-        let model = model.as_ptr() as *mut f32;
-        let delta_matrix = delta_matrix.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as *mut f32);
-        let snap = snap.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as *mut f32);
-        let local_bounds = local_bounds.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as *mut f32);
-        let bounds_snap = bounds_snap.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as *mut f32);
+        let delta_matrix = delta_matrix.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as _);
+        let snap = snap.map_or_else(ptr::null_mut, |v| v.as_mut_ptr());
+        let local_bounds = local_bounds.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as _);
+        let bounds_snap = bounds_snap.map_or_else(ptr::null_mut, |v| v.as_mut_ptr() as _);
         ffi::ImGuizmo_Manipulate(
             view,
             projection,
@@ -313,7 +316,8 @@ fn manipulate<'a, 'ui>(
 }
 
 /// Build a viewport from a window or the whole display.
-#[derive(Copy, Clone, Debug, Default)]
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 pub struct Rect {
     pub x: f32,
     pub y: f32,

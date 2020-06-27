@@ -1,4 +1,8 @@
+#include "imgui.h"
 #include "cimguizmo.h"
+#include <type_traits>
+
+static_assert(std::is_pod<CImVec2>(), "CImVec2 must be pod");
 
 IMGUIZMO_C_API void ImGuizmo_SetDrawlist() {
     ImGuizmo::SetDrawlist();
@@ -44,8 +48,14 @@ IMGUIZMO_C_API void ImGuizmo_DrawGrid(const float *view, const float *projection
     ImGuizmo::DrawGrid(view, projection, matrix, gridSize);
 }
 
-IMGUIZMO_C_API void ImGuizmo_Manipulate(const float *view, const float *projection, ImGuizmo_OPERATION operation, ImGuizmo_MODE mode, float *matrix, float *deltaMatrix, float *snap, float *localBounds, float *boundsSnap) {
+IMGUIZMO_C_API void ImGuizmo_Manipulate(const float *view, const float *projection, ImGuizmo_Operation operation, ImGuizmo_Mode mode, float *matrix, float *deltaMatrix, float *snap, float *localBounds, float *boundsSnap) {
     auto o = static_cast<ImGuizmo::OPERATION>(operation);
     auto m = static_cast<ImGuizmo::MODE>(mode);
     ImGuizmo::Manipulate(view, projection, o, m, matrix, deltaMatrix, snap, localBounds, boundsSnap);
+}
+
+IMGUIZMO_C_API void ImGuizmo_ViewManipulate(float* view, float length, const CImVec2* position, const CImVec2* size, ImU32 backgroundColor) {
+    auto p = ImVec2(position->x, position->y);
+    auto s = ImVec2(size->x, size->y);
+    ImGuizmo::ViewManipulate(view, length, p, s, backgroundColor);
 }

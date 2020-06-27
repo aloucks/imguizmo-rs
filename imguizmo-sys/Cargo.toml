@@ -5,7 +5,7 @@ authors = ["Aaron Loucks <aloucks@cofront.net>"]
 edition = "2018"
 
 [dependencies]
-imgui-sys = { version = "0.4", git = "https://github.com/aloucks/imgui-rs.git", branch = "export_include" }
+imgui-sys = "0.4"
 
 [build-dependencies]
 cc = "1"
